@@ -3,6 +3,8 @@ import java.util.List;
 public class Inventory {
   private List<Item> items;
 
+  private Integer defaultPriceChange = 1;
+
   public Inventory(List<Item> items) {
     this.items = items;
   }
@@ -16,10 +18,19 @@ public class Inventory {
       if (item.name != "Fine Art" && item.name != "Concert Tickets") {
         if (item.price > 0) {
           if (item.name != "Gold Coins") {
-            item.price = item.price - 1;
+            if (item.name.equals("Flowers")) {
+              if (item.price > 1) {
+                item.price -= (defaultPriceChange * 2);
+              } else if (item.price == 1) {
+                item.price = 0;
+              }
+            } else {
+              item.price = item.price - defaultPriceChange;
+            }
           }
         }
       } else {
+        // this is fine art or concert tickets
         if (item.price < 50) {
           item.price = item.price + 1;
           if (item.name == "Concert Tickets") {
@@ -36,15 +47,24 @@ public class Inventory {
           }
         }
       }
+
+      // descreasing the sell by date
       if (item.name != "Gold Coins") {
-        item.sellBy = item.sellBy - 1;
+        item.sellBy = item.sellBy - defaultPriceChange;
       }
+
+      // hasn't hit sellBy yet
       if (item.sellBy < 0) {
         if (item.name != "Fine Art") {
           if (item.name != "Concert Tickets") {
+            // will hit in here for flowers
             if (item.price > 0) {
               if (item.name != "Gold Coins") {
-                item.price = item.price - 1;
+                if (item.name.equals("Flowers")) {
+                  item.price -= (defaultPriceChange * 2);
+                } else {
+                  item.price = item.price - defaultPriceChange;
+                }
               }
             }
 
@@ -52,6 +72,7 @@ public class Inventory {
             item.price = item.price - item.price;
           }
         } else {
+          // at sell date or past
           if (item.price < 50) {
             item.price = item.price + 1;
           }
